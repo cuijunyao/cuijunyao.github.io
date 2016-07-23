@@ -212,92 +212,6 @@
             
               
                 
-                <a class="post-title-link" href="/2016/02/05/第一次进入正题/" itemprop="url">
-                  Python多线程 VS 多进程
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">發表於</span>
-            <time itemprop="dateCreated" datetime="2016-02-05T01:55:15+08:00" content="2016-02-05">
-              2016-02-05
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># encoding: utf-8</span></span><br><span class="line"></span><br><span class="line"><span class="string">'''</span><br><span class="line">一般来说，使用线程有两种模式，一种是创建线程要执行的函数，把这个函数传递进Thread对象里，让它来执行；</span><br><span class="line">另一种是直接从Thread继承，创建一个新的class，把线程执行的代码放到这个新的class里。</span><br><span class="line">Python不能真正意义上利用多核计算,Python下比较好的并行方式是使用多进程，这样可以非常有效的使用CPU资源，并实现真正意义上的并发;</span><br><span class="line">'''</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">doChore</span><span class="params">()</span>:</span></span><br><span class="line">    time.sleep(<span class="number">0.5</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">booth</span><span class="params">(tid)</span>:</span> </span><br><span class="line">    <span class="keyword">global</span> i</span><br><span class="line">    <span class="keyword">global</span> lock</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">        lock.acquire()                <span class="comment"># Lock; or wait if other thread is holding the lock</span></span><br><span class="line">        <span class="keyword">if</span> i != <span class="number">0</span>:</span><br><span class="line">            i = i - <span class="number">1</span>                 <span class="comment"># Sell tickets</span></span><br><span class="line">            print(tid,<span class="string">':now left:'</span>,i) <span class="comment"># Tickets left</span></span><br><span class="line">            doChore()                 <span class="comment"># Other critical operations</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            print(<span class="string">"Thread_id"</span>,tid,<span class="string">" No more tickets"</span>)</span><br><span class="line">            os._exit(<span class="number">0</span>)              <span class="comment"># Exit the whole process immediately</span></span><br><span class="line">        lock.release()               <span class="comment"># Unblock</span></span><br><span class="line">        doChore()                    <span class="comment"># Non-critical operations</span></span><br><span class="line"></span><br><span class="line">i    = <span class="number">100</span>                           <span class="comment"># Available ticket number </span></span><br><span class="line">lock = threading.Lock()              <span class="comment"># Lock (i.e., mutex)</span></span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> range(<span class="number">10</span>):</span><br><span class="line">    new_thread = threading.Thread(target=booth, args=(k,))  <span class="comment">#target为要注册的目标函数,args为要注册函数的参数取值，元组类型</span></span><br><span class="line">    new_thread.start()                                </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">doChore</span><span class="params">()</span>:</span></span><br><span class="line">    time.sleep(<span class="number">0.5</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BoothThread</span><span class="params">(threading.Thread)</span>:</span> <span class="comment">#直接从线程类继承</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, tid, monitor)</span>:</span></span><br><span class="line">        threading.Thread.__init__(self) <span class="comment">#父类初始化</span></span><br><span class="line">        self.tid = tid</span><br><span class="line">        self.monitor = monitor</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span>  <span class="comment">#重写run方法</span></span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">            monitor[<span class="string">'lock'</span>].acquire()                          <span class="comment"># Lock; or wait if other thread is holding the lock</span></span><br><span class="line">            <span class="keyword">if</span> monitor[<span class="string">'tick'</span>] != <span class="number">0</span>:</span><br><span class="line">                monitor[<span class="string">'tick'</span>] = monitor[<span class="string">'tick'</span>] - <span class="number">1</span>          <span class="comment"># Sell tickets</span></span><br><span class="line">                <span class="keyword">print</span> self.tid,<span class="string">':now left:'</span>,monitor[<span class="string">'tick'</span>]    <span class="comment"># Tickets left</span></span><br><span class="line">                doChore()                                      <span class="comment"># Other critical operations</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">print</span> <span class="string">"Thread_id"</span>,self.tid,<span class="string">" No more tickets"</span></span><br><span class="line">                os._exit(<span class="number">0</span>)                                    <span class="comment"># Exit the whole process immediately</span></span><br><span class="line">            monitor[<span class="string">'lock'</span>].release()                          <span class="comment"># Unblock</span></span><br><span class="line">            doChore()                                          <span class="comment"># Non-critical operations</span></span><br><span class="line"></span><br><span class="line">monitor = &#123;<span class="string">'tick'</span>:<span class="number">100</span>, <span class="string">'lock'</span>:threading.Lock()&#125;</span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> range(<span class="number">10</span>):</span><br><span class="line">    new_thread = BoothThread(k, monitor)</span><br><span class="line">    new_thread.start()</span><br></pre></td></tr></table></figure>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env python</span><br><span class="line"># encoding: utf-8</span><br><span class="line"></span><br><span class="line">#多线程与多进程比较</span><br><span class="line">import os</span><br><span class="line">import threading</span><br><span class="line">import multiprocessing</span><br><span class="line"></span><br><span class="line">def worker(sign, <span class="operator"><span class="keyword">lock</span>):</span><br><span class="line">    <span class="keyword">lock</span>.acquire()</span><br><span class="line">    print(<span class="keyword">sign</span>, os.getpid())  #os.getpid()获取当前进程的<span class="keyword">id</span>   </span><br><span class="line">    <span class="keyword">lock</span>.<span class="keyword">release</span>()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#多线程</span><br><span class="line"><span class="built_in">record</span> = []</span><br><span class="line"><span class="keyword">lock</span>  = threading.<span class="keyword">Lock</span>()  #线程锁</span><br><span class="line"><span class="keyword">for</span> <span class="keyword">i</span> <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">5</span>):</span><br><span class="line">    <span class="keyword">thread</span> = threading.<span class="keyword">Thread</span>(target=worker,args=(<span class="string">'thread'</span>, <span class="keyword">lock</span>))</span><br><span class="line">    <span class="keyword">thread</span>.<span class="keyword">start</span>()</span><br><span class="line">    <span class="built_in">record</span>.append(<span class="keyword">thread</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> <span class="keyword">thread</span> <span class="keyword">in</span> <span class="built_in">record</span>:</span><br><span class="line">    <span class="keyword">thread</span>.<span class="keyword">join</span>() #等待子线程结束</span><br><span class="line"></span><br><span class="line">#多进程</span><br><span class="line"><span class="built_in">record</span> = []</span><br><span class="line"><span class="keyword">lock</span> = multiprocessing.<span class="keyword">Lock</span>() #进程锁</span><br><span class="line"><span class="keyword">for</span> <span class="keyword">i</span> <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">5</span>):</span><br><span class="line">    process = multiprocessing.Process(target=worker,args=(<span class="string">'process'</span>,<span class="keyword">lock</span>)) </span><br><span class="line">    process.<span class="keyword">start</span>()</span><br><span class="line">    <span class="built_in">record</span>.append(process)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> process <span class="keyword">in</span> <span class="built_in">record</span>:</span><br><span class="line">    process.<span class="keyword">join</span>() #等待子进程结束</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">可以看的出来多进程的用法和多线程是几乎相同的</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
                 <a class="post-title-link" href="/2016/02/05/hello-world/" itemprop="url">
                   Hello World
                 </a>
@@ -411,7 +325,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-count">1</span>
               <span class="site-state-item-name">文章</span>
             </a>
           </div>
